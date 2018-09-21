@@ -63,8 +63,8 @@ public class TriangleRenderer implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-        String vertexShaderSource = TextResourceReader.readTextFromResource(mContext, R.raw.triangle_vertex_shader);
-        String fragmentShaderSource = TextResourceReader.readTextFromResource(mContext, R.raw.triangle_fragment_shader);
+        String vertexShaderSource = TextResourceReader.readTextFromResource(mContext, R.raw.simple_vertex_shader);
+        String fragmentShaderSource = TextResourceReader.readTextFromResource(mContext, R.raw.simple_fragment_shader);
 
         int vertexShader = ShaderHelper.compileVertexShader(vertexShaderSource);
         int fragmentShader = ShaderHelper.compileFragmentShader(fragmentShaderSource);

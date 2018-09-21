@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class TextResourceReader {
+public final class TextResourceReader {
     public static String readTextFromResource(Context context, int resourceId) {
         StringBuilder body = new StringBuilder();
         try {
@@ -26,5 +26,8 @@ public class TextResourceReader {
             throw new RuntimeException("Resource not found: " + resourceId, nfe);
         }
         return body.toString();
+    }
+
+    private TextResourceReader() {
     }
 }

@@ -21,7 +21,7 @@ import static android.opengl.GLES20.glLinkProgram;
 import static android.opengl.GLES20.glShaderSource;
 import static android.opengl.GLES20.glValidateProgram;
 
-public class ShaderHelper {
+public final class ShaderHelper {
     private static final boolean D = BuildConfig.DEBUG;
     private static final String TAG = ShaderHelper.class.getSimpleName();
 
@@ -106,5 +106,8 @@ public class ShaderHelper {
         Log.v(TAG, "Results of validating program: " + validateStatus[0]
                 + "\nLog:" + glGetProgramInfoLog(programObjectId));
         return validateStatus[0] != 0;
+    }
+
+    private ShaderHelper() {
     }
 }

@@ -1,1 +1,1 @@
-include ':triangle', ':common'
+include ':triangle', ':common', ':texture'
