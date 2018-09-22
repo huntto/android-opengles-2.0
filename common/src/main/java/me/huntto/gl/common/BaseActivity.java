@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import me.huntto.gl.common.util.GLESChecker;
+
 public abstract class BaseActivity extends AppCompatActivity {
     private GLSurfaceView mGLSurfaceView;
     private boolean mRendererSet;

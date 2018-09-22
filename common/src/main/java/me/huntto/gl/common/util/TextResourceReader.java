@@ -1,4 +1,4 @@
-package me.huntto.gl.common;
+package me.huntto.gl.common.util;
 
 import android.content.Context;
 import android.content.res.Resources;

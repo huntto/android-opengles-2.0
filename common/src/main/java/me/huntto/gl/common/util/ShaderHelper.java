@@ -1,6 +1,8 @@
-package me.huntto.gl.common;
+package me.huntto.gl.common.util;
 
 import android.util.Log;
+
+import me.huntto.gl.common.BuildConfig;
 
 import static android.opengl.GLES20.GL_COMPILE_STATUS;
 import static android.opengl.GLES20.GL_FRAGMENT_SHADER;
@@ -106,6 +108,20 @@ public final class ShaderHelper {
         Log.v(TAG, "Results of validating program: " + validateStatus[0]
                 + "\nLog:" + glGetProgramInfoLog(programObjectId));
         return validateStatus[0] != 0;
+    }
+
+    public static int buildProgram(String vertexShaderSource, String fragmentShaderSource) {
+        int program;
+
+        int vertexShader = ShaderHelper.compileVertexShader(vertexShaderSource);
+        int fragmentShader = ShaderHelper.compileFragmentShader(fragmentShaderSource);
+        program = ShaderHelper.linkProgram(vertexShader, fragmentShader);
+
+        if (D) {
+            ShaderHelper.validateProgram(program);
+        }
+
+        return program;
     }
 
     private ShaderHelper() {

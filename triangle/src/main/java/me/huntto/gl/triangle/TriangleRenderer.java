@@ -10,8 +10,8 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import me.huntto.gl.common.ShaderHelper;
-import me.huntto.gl.common.TextResourceReader;
+import me.huntto.gl.common.util.ShaderHelper;
+import me.huntto.gl.common.util.TextResourceReader;
 
 import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
 import static android.opengl.GLES20.GL_FLOAT;

@@ -10,6 +10,6 @@ public class MainActivity extends BaseActivity {
     @NonNull
     @Override
     protected GLSurfaceView.Renderer newRenderer() {
-        return null;
+        return new TextureRenderer(this);
     }
 }
