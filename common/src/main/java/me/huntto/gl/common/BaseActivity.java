@@ -9,7 +9,7 @@ import android.widget.Toast;
 import me.huntto.gl.common.util.GLESChecker;
 
 public abstract class BaseActivity extends AppCompatActivity {
-    private GLSurfaceView mGLSurfaceView;
+    protected GLSurfaceView mGLSurfaceView;
     private boolean mRendererSet;
 
     @Override
