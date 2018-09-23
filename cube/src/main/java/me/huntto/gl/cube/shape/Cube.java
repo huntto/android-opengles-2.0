@@ -41,7 +41,9 @@ public class Cube implements Shape {
 
     private final float[] mModelMatrix = new float[16];
     private final float[] mMVPMatrix = new float[16];
-    FloatBuffer colorBuffer;
+
+    private static FloatBuffer sColorBuffer;
+    private static FloatBuffer sPositionBuffer;
 
     public static void init(Context context) {
         final float vertices[] = {
@@ -151,18 +153,16 @@ public class Cube implements Shape {
         };
 
 
-        FloatBuffer vertexBuffer = ByteBuffer
+        sPositionBuffer = ByteBuffer
                 .allocateDirect(vertices.length * BYTES_PER_FLOAT)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
-        vertexBuffer.put(vertices);
-        vertexBuffer.position(0);
+        sPositionBuffer.put(vertices);
 
-        FloatBuffer colorBuffer = ByteBuffer.allocateDirect(colors.length * BYTES_PER_FLOAT)
+        sColorBuffer = ByteBuffer.allocateDirect(colors.length * BYTES_PER_FLOAT)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
-        colorBuffer.put(colors);
-        colorBuffer.position(0);
+        sColorBuffer.put(colors);
 
         String vertexShaderSource = TextResourceReader.readTextFromResource(context, R.raw.vertex_shader);
         String fragmentShaderSource = TextResourceReader.readTextFromResource(context, R.raw.fragment_shader);
@@ -174,10 +174,6 @@ public class Cube implements Shape {
         aColorLocation = glGetAttribLocation(sProgram, A_COLOR);
         uMVPMatrixLocation = glGetUniformLocation(sProgram, U_MVP_MATRIX);
 
-        glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT,
-                GL_FLOAT, false, 0, vertexBuffer);
-        glVertexAttribPointer(aColorLocation, COLOR_COMPONENT_COUNT,
-                GL_FLOAT, false, 0, colorBuffer);
     }
 
     public Cube() {
@@ -193,9 +189,19 @@ public class Cube implements Shape {
 
         glUniformMatrix4fv(uMVPMatrixLocation, 1, false, mMVPMatrix, 0);
 
-        glEnableVertexAttribArray(aPositionLocation);
+        sPositionBuffer.position(0);
+        glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT,
+                GL_FLOAT, false, 0, sPositionBuffer);
+
+        sColorBuffer.position(0);
+        glVertexAttribPointer(aColorLocation, COLOR_COMPONENT_COUNT,
+                GL_FLOAT, false, 0, sColorBuffer);
+
         glEnableVertexAttribArray(aColorLocation);
+        glEnableVertexAttribArray(aPositionLocation);
+
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
         glDisableVertexAttribArray(aColorLocation);
         glDisableVertexAttribArray(aPositionLocation);
     }
