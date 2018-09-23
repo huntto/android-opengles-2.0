@@ -1,4 +1,4 @@
-package me.huntto.gl.cube;
+package me.huntto.gl.texturecube;
 
 import android.opengl.GLSurfaceView;
 
@@ -8,7 +8,7 @@ import java.util.List;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import me.huntto.gl.cube.shape.Shape;
+import me.huntto.gl.texturecube.shape.Shape;
 
 import static android.opengl.GLES20.GL_BACK;
 import static android.opengl.GLES20.GL_BLEND;
@@ -17,6 +17,7 @@ import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
 import static android.opengl.GLES20.GL_CULL_FACE;
 import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
 import static android.opengl.GLES20.GL_DEPTH_TEST;
+import static android.opengl.GLES20.GL_FRONT;
 import static android.opengl.GLES20.glClear;
 import static android.opengl.GLES20.glClearColor;
 import static android.opengl.GLES20.glCullFace;
@@ -49,8 +50,8 @@ public class ShapeRenderer implements GLSurfaceView.Renderer {
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glEnable(GL_DEPTH_TEST);
 
-        glFrontFace(GL_CCW);
         glEnable(GL_CULL_FACE);
+        glFrontFace(GL_CCW);
         glCullFace(GL_BACK);
 
         glEnable(GL_BLEND);
@@ -64,7 +65,7 @@ public class ShapeRenderer implements GLSurfaceView.Renderer {
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         glViewport(0, 0, width, height);
         perspectiveM(mProjectionMatrix, 0, 45, (float) width / (float) height, 1f, 10f);
-        setLookAtM(mViewMatrix, 0, 1f, 1f, -2f, 0f, 0f, 0f, 0f, 1f, 0f);
+        setLookAtM(mViewMatrix, 0, 1f, 1f, -3f, 0f, 0f, 0f, 0f, 1f, 0f);
     }
 
     @Override

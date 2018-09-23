@@ -48,58 +48,58 @@ public class Cube implements Shape {
     public static void init(Context context) {
         final float vertices[] = {
                 // front
-                -0.5f, -0.5f, 0.5f,     // left bottom front
-                -0.5f, 0.5f, 0.5f,      // left top front
-                0.5f, 0.5f, 0.5f,       // right top front
+                -0.5f, -0.5f, -0.5f,
+                -0.5f, 0.5f, -0.5f,
+                0.5f, -0.5f, -0.5f,
 
-                0.5f, 0.5f, 0.5f,       // right top front
-                0.5f, -0.5f, 0.5f,      // right bottom front
-                -0.5f, -0.5f, 0.5f,     // left bottom front
+                -0.5f, 0.5f, -0.5f,
+                0.5f, 0.5f, -0.5f,
+                0.5f, -0.5f, -0.5f,
 
                 // back
-                -0.5f, -0.5f, -0.5f,    // left bottom back
-                0.5f, 0.5f, -0.5f,      // right top back
-                -0.5f, 0.5f, -0.5f,     // left top back
+                0.5f, -0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+                -0.5f, -0.5f, 0.5f,
 
-                0.5f, 0.5f, -0.5f,      // right top back
-                0.5f, -0.5f, -0.5f,     // right bottom back
-                -0.5f, -0.5f, -0.5f,    // left bottom back
-
-                // top
-                -0.5f, 0.5f, 0.5f,      // left top front
-                -0.5f, 0.5f, -0.5f,     // left top back
-                0.5f, 0.5f, -0.5f,      // right top back
-
-                0.5f, 0.5f, -0.5f,      // right top back
-                0.5f, 0.5f, 0.5f,       // right top front
-                -0.5f, 0.5f, 0.5f,      // left top front
-
-                // left
-                -0.5f, -0.5f, -0.5f,    // left bottom back
-                -0.5f, 0.5f, -0.5f,     // left top back
-                -0.5f, 0.5f, 0.5f,      // left top front
-
-                -0.5f, 0.5f, 0.5f,      // left top front
-                -0.5f, -0.5f, 0.5f,     // left bottom front
-                -0.5f, -0.5f, -0.5f,    // left bottom back
+                0.5f, 0.5f, 0.5f,
+                -0.5f, 0.5f, 0.5f,
+                -0.5f, -0.5f, 0.5f,
 
                 // right
-                0.5f, -0.5f, 0.5f,      // right bottom front
-                0.5f, 0.5f, 0.5f,       // right top front
-                0.5f, 0.5f, -0.5f,      // right top back
+                -0.5f, -0.5f, 0.5f,
+                -0.5f, 0.5f, 0.5f,
+                -0.5f, -0.5f, -0.5f,
 
-                0.5f, 0.5f, -0.5f,      // right top back
-                0.5f, -0.5f, -0.5f,     // right bottom back
-                0.5f, -0.5f, 0.5f,      // right bottom front
+                -0.5f, 0.5f, 0.5f,
+                -0.5f, 0.5f, -0.5f,
+                -0.5f, -0.5f, -0.5f,
+
+                // left
+                0.5f, -0.5f, -0.5f,
+                0.5f, 0.5f, -0.5f,
+                0.5f, -0.5f, 0.5f,
+
+                0.5f, 0.5f, -0.5f,
+                0.5f, 0.5f, 0.5f,
+                0.5f, -0.5f, 0.5f,
 
                 // bottom
-                -0.5f, -0.5f, -0.5f,    // left bottom back
-                -0.5f, -0.5f, 0.5f,     // left bottom front
-                0.5f, -0.5f, 0.5f,      // right bottom front
+                -0.5f, -0.5f, 0.5f,
+                -0.5f, -0.5f, -0.5f,
+                0.5f, -0.5f, 0.5f,
 
-                0.5f, -0.5f, 0.5f,      // right bottom front
-                0.5f, -0.5f, -0.5f,     // right bottom back
-                -0.5f, -0.5f, -0.5f,    // left bottom back
+                -0.5f, -0.5f, -0.5f,
+                0.5f, -0.5f, -0.5f,
+                0.5f, -0.5f, 0.5f,
+
+                // top
+                -0.5f, 0.5f, -0.5f,
+                -0.5f, 0.5f, 0.5f,
+                0.5f, 0.5f, -0.5f,
+
+                -0.5f, 0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+                0.5f, 0.5f, -0.5f
         };
 
         final float colors[] = {
@@ -178,7 +178,7 @@ public class Cube implements Shape {
 
     public Cube() {
         setIdentityM(mModelMatrix, 0);
-        translateM(mModelMatrix, 0, 0, 0, -0.5f);
+        translateM(mModelMatrix, 0, 0, 0, 0.5f);
     }
 
     @Override

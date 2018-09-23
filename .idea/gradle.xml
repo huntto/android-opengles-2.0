@@ -11,6 +11,7 @@
             <option value="$PROJECT_DIR$/common" />
             <option value="$PROJECT_DIR$/cube" />
             <option value="$PROJECT_DIR$/texture" />
+            <option value="$PROJECT_DIR$/texturecube" />
             <option value="$PROJECT_DIR$/triangle" />
           </set>
         </option>

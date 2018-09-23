@@ -43,8 +43,8 @@ public class Triangle implements Shape {
 
         float[] vertices = {
                 -0.5f, -0.5f,
-                0f, 0.5f,
-                0.5f, -0.5f
+                0.5f, -0.5f,
+                0f, 0.5f
         };
 
         sVertexData = ByteBuffer.allocateDirect(vertices.length * BYTES_PER_FLOAT)
