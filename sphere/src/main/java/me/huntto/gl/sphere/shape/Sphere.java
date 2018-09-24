@@ -8,16 +8,21 @@ import java.nio.FloatBuffer;
 
 import me.huntto.gl.common.util.ShaderHelper;
 import me.huntto.gl.common.util.TextResourceReader;
+import me.huntto.gl.common.util.TextureHelper;
 import me.huntto.gl.sphere.R;
 
 import static android.opengl.GLES20.GL_FLOAT;
-import static android.opengl.GLES20.GL_LINE_STRIP;
+import static android.opengl.GLES20.GL_TEXTURE0;
+import static android.opengl.GLES20.GL_TEXTURE_2D;
+import static android.opengl.GLES20.GL_TRIANGLES;
+import static android.opengl.GLES20.glActiveTexture;
+import static android.opengl.GLES20.glBindTexture;
 import static android.opengl.GLES20.glDisableVertexAttribArray;
 import static android.opengl.GLES20.glDrawArrays;
 import static android.opengl.GLES20.glEnableVertexAttribArray;
 import static android.opengl.GLES20.glGetAttribLocation;
 import static android.opengl.GLES20.glGetUniformLocation;
-import static android.opengl.GLES20.glUniform4f;
+import static android.opengl.GLES20.glUniform1i;
 import static android.opengl.GLES20.glUniformMatrix4fv;
 import static android.opengl.GLES20.glUseProgram;
 import static android.opengl.GLES20.glVertexAttribPointer;
@@ -28,17 +33,18 @@ import static android.opengl.Matrix.translateM;
 public class Sphere implements Shape {
     private static final int BYTES_PER_FLOAT = 4;
     private static final int POSITION_COMPONENT_COUNT = 3;
-    private static final int ANGLE_SPAN = 10;
+
+    private static final int ANGLE_STEP = 5;
     private static final float RADIUS = 0.5f;
 
     private static int sProgram;
 
     private static final String A_POSITION = "aPosition";
-    private static final String U_COLOR = "uColor";
+    private static final String U_TEXTURE_UNIT = "uTextureUnit";
     private static final String U_MATRIX = "uMatrix";
 
     private static int uMatrixLocation;
-    private static int uColorLocation;
+    private static int uTextureUnitLocation;
     private static int aPositionLocation;
 
     private final float[] mModelMatrix = new float[16];
@@ -46,50 +52,64 @@ public class Sphere implements Shape {
 
     private static FloatBuffer sPositionBuffer;
 
+    private static int sTextureId;
+
     public static void init(Context context) {
-        final int vAngle180 = 180;
-        final int hAngle360 = 360;
+        final int angle180 = 180;
+        final int angle360 = 360;
 
-        int vCount = vAngle180 / ANGLE_SPAN + 1;
-        int hCount = hAngle360 / ANGLE_SPAN + 1;
+        float[] vertices = new float[angle180 / ANGLE_STEP
+                * angle360 / ANGLE_STEP
+                * 6
+                * POSITION_COMPONENT_COUNT];
 
-        float[] vertices = new float[vCount * hCount * POSITION_COMPONENT_COUNT];
+        int count = 0;
+        for (int longitude = 0; longitude < angle360; longitude += ANGLE_STEP) {
+            for (int latitude = 0; latitude < angle180; latitude += ANGLE_STEP) {
+                vertices[count++] = longitude;
+                vertices[count++] = latitude;
+                vertices[count++] = RADIUS;
 
-        int index = 0;
-        for (int vAngle = 0; vAngle <= vAngle180; vAngle += ANGLE_SPAN) {
-            for (int hAngle = 0; hAngle < hAngle360; hAngle += ANGLE_SPAN) {
+                vertices[count++] = longitude;
+                vertices[count++] = latitude + ANGLE_STEP;
+                vertices[count++] = RADIUS;
 
-                float x = (float) (RADIUS * Math.sin(Math.toRadians(vAngle))
-                        * Math.cos(Math.toRadians(hAngle)));
-                float y = (float) (RADIUS * Math.sin(Math.toRadians(vAngle))
-                        * Math.sin(Math.toRadians(hAngle)));
-                float z = (float) (RADIUS * Math.cos(Math.toRadians(vAngle)));
+                vertices[count++] = longitude + ANGLE_STEP;
+                vertices[count++] = latitude + ANGLE_STEP;
+                vertices[count++] = RADIUS;
 
-                vertices[index] = x;
-                vertices[index + 1] = y;
-                vertices[index + 2] = z;
+                vertices[count++] = longitude + ANGLE_STEP;
+                vertices[count++] = latitude + ANGLE_STEP;
+                vertices[count++] = RADIUS;
 
-                index += POSITION_COMPONENT_COUNT;
+                vertices[count++] = longitude + ANGLE_STEP;
+                vertices[count++] = latitude;
+                vertices[count++] = RADIUS;
+
+                vertices[count++] = longitude;
+                vertices[count++] = latitude;
+                vertices[count++] = RADIUS;
             }
         }
 
         sPositionBuffer = ByteBuffer
-                .allocateDirect(index * BYTES_PER_FLOAT)
+                .allocateDirect(count * BYTES_PER_FLOAT)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
-        sPositionBuffer.put(vertices, 0, index);
+        sPositionBuffer.put(vertices, 0, count);
 
 
-        String vertexShaderSource = TextResourceReader.readTextFromResource(context, R.raw.vertex_shader);
-        String fragmentShaderSource = TextResourceReader.readTextFromResource(context, R.raw.fragment_shader);
+        String vertexShaderSource = TextResourceReader.readTextFromResource(context, R.raw.sphere_vertex_shader);
+        String fragmentShaderSource = TextResourceReader.readTextFromResource(context, R.raw.texture_fragment_shader);
         sProgram = ShaderHelper.buildProgram(vertexShaderSource, fragmentShaderSource);
 
         glUseProgram(sProgram);
 
         aPositionLocation = glGetAttribLocation(sProgram, A_POSITION);
-        uColorLocation = glGetUniformLocation(sProgram, U_COLOR);
+        uTextureUnitLocation = glGetUniformLocation(sProgram, U_TEXTURE_UNIT);
         uMatrixLocation = glGetUniformLocation(sProgram, U_MATRIX);
 
+        sTextureId = TextureHelper.loadTexture(context, R.drawable.board);
     }
 
     public Sphere() {
@@ -104,15 +124,19 @@ public class Sphere implements Shape {
         multiplyMM(mMVPMatrix, 0, viewProjectionMatrix, 0, mModelMatrix, 0);
 
         glUniformMatrix4fv(uMatrixLocation, 1, false, mMVPMatrix, 0);
-        glUniform4f(uColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, sTextureId);
+        glUniform1i(uTextureUnitLocation, 0);
 
         sPositionBuffer.position(0);
         glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT,
                 GL_FLOAT, false, 0, sPositionBuffer);
 
+
         glEnableVertexAttribArray(aPositionLocation);
 
-        glDrawArrays(GL_LINE_STRIP, 0, sPositionBuffer.limit() / POSITION_COMPONENT_COUNT);
+        glDrawArrays(GL_TRIANGLES, 0, sPositionBuffer.limit() / POSITION_COMPONENT_COUNT);
 
         glDisableVertexAttribArray(aPositionLocation);
     }
