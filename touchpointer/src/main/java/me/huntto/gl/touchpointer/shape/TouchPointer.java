@@ -1,7 +1,6 @@
 package me.huntto.gl.touchpointer.shape;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -13,8 +12,6 @@ import me.huntto.gl.touchpointer.R;
 
 import static android.opengl.GLES20.GL_FLOAT;
 import static android.opengl.GLES20.GL_POINTS;
-import static android.opengl.GLES20.GL_TRIANGLES;
-import static android.opengl.GLES20.glDisableVertexAttribArray;
 import static android.opengl.GLES20.glDrawArrays;
 import static android.opengl.GLES20.glEnableVertexAttribArray;
 import static android.opengl.GLES20.glGetAttribLocation;
@@ -29,32 +26,43 @@ import static android.opengl.Matrix.setIdentityM;
 public class TouchPointer implements Shape {
     private static final int BYTES_PER_FLOAT = 4;
     private static final int POSITION_COMPONENT_COUNT = 2;
-
-    private static final int VERTEX_DEFAULT_CAPACITY = POSITION_COMPONENT_COUNT * 25;
+    private static final int POINT_SIZE_COMPONENT_COUNT = 1;
+    private static final int MAX_POINTER_COUNT = 25;
 
     private static int sProgram;
 
     private static final String A_POSITION = "aPosition";
+    private static final String A_POINT_SIZE = "aPointSize";
     private static final String U_MATRIX = "uMatrix";
     private static final String U_COLOR = "uColor";
 
     private static int aPositionLocation;
+    private static int aPointSizeLocation;
     private static int uMatrixLocation;
     private static int uColorLocation;
 
     private final float[] mModelMatrix = new float[16];
     private final float[] mMatrix = new float[16];
 
-    private static FloatBuffer sVertexBuffer;
+    private static FloatBuffer sPositionBuffer;
+    private static FloatBuffer sPointSizeBuffer;
 
-    private final Object VERTEX_SYNC = new Object();
-    private int mPointerCount;
-    private float[] mPointers;
+    private final Object BUFFER_SYNC = new Object();
+    private volatile int mPointerCount;
+
+    private float[] mPositions;
+    private float[] mPointSizes;
+
     private int mPointerIndex;
 
     public static void init(Context context) {
-        sVertexBuffer = ByteBuffer
-                .allocateDirect(VERTEX_DEFAULT_CAPACITY * BYTES_PER_FLOAT)
+        sPositionBuffer = ByteBuffer
+                .allocateDirect(MAX_POINTER_COUNT * POSITION_COMPONENT_COUNT * BYTES_PER_FLOAT)
+                .order(ByteOrder.nativeOrder())
+                .asFloatBuffer();
+
+        sPointSizeBuffer = ByteBuffer
+                .allocateDirect(MAX_POINTER_COUNT * POINT_SIZE_COMPONENT_COUNT * BYTES_PER_FLOAT)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
 
@@ -66,6 +74,7 @@ public class TouchPointer implements Shape {
         glUseProgram(sProgram);
 
         aPositionLocation = glGetAttribLocation(sProgram, A_POSITION);
+        aPointSizeLocation = glGetAttribLocation(sProgram, A_POINT_SIZE);
         uMatrixLocation = glGetUniformLocation(sProgram, U_MATRIX);
         uColorLocation = glGetUniformLocation(sProgram, U_COLOR);
     }
@@ -84,12 +93,17 @@ public class TouchPointer implements Shape {
 
         glUniform4f(uColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
 
-        synchronized (VERTEX_SYNC) {
-            sVertexBuffer.position(0);
+        synchronized (BUFFER_SYNC) {
+            sPositionBuffer.position(0);
             glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT,
-                    GL_FLOAT, false, 0, sVertexBuffer);
+                    GL_FLOAT, false, 0, sPositionBuffer);
+
+            sPointSizeBuffer.position(0);
+            glVertexAttribPointer(aPointSizeLocation, POINT_SIZE_COMPONENT_COUNT,
+                    GL_FLOAT, false, 0, sPointSizeBuffer);
 
             glEnableVertexAttribArray(aPositionLocation);
+            glEnableVertexAttribArray(aPointSizeLocation);
 
             glDrawArrays(GL_POINTS, 0, mPointerCount);
         }
@@ -97,26 +111,41 @@ public class TouchPointer implements Shape {
 
 
     public void resetPutPointer(int maxPointerCount) {
-        if (mPointers == null || mPointers.length < POSITION_COMPONENT_COUNT * maxPointerCount) {
-            mPointers = new float[POSITION_COMPONENT_COUNT * maxPointerCount];
+        int positionCount = POSITION_COMPONENT_COUNT * maxPointerCount;
+        if (mPositions == null || mPositions.length < positionCount) {
+            mPositions = new float[positionCount];
+        }
+
+        int pointSizeCount = POINT_SIZE_COMPONENT_COUNT * maxPointerCount;
+        if (mPointSizes == null || mPointSizes.length < pointSizeCount) {
+            mPointSizes = new float[pointSizeCount];
         }
         mPointerIndex = 0;
     }
 
     public void putPointer(float x, float y, float size) {
-        mPointers[mPointerIndex] = x;
-        mPointers[mPointerIndex+1] = y;
-        mPointerIndex += 2;
+        int pointSizeIndex = mPointerIndex * POINT_SIZE_COMPONENT_COUNT;
+        mPointSizes[pointSizeIndex] = size;
+
+        int positionIndex = mPointerIndex * POSITION_COMPONENT_COUNT;
+        mPositions[positionIndex] = x;
+        mPositions[positionIndex + 1] = y;
+
+        mPointerIndex++;
     }
 
     public void endPutPointer() {
-        if (mPointers == null) {
+        if (mPositions == null) {
             return;
         }
-        synchronized (VERTEX_SYNC) {
-            sVertexBuffer.position(0);
-            sVertexBuffer.put(mPointers, 0, mPointerIndex);
-            mPointerCount = mPointerIndex / POSITION_COMPONENT_COUNT;
+        synchronized (BUFFER_SYNC) {
+            sPointSizeBuffer.position(0);
+            sPointSizeBuffer.put(mPointSizes, 0, mPointerIndex * POINT_SIZE_COMPONENT_COUNT);
+
+            sPositionBuffer.position(0);
+            sPositionBuffer.put(mPositions, 0, mPointerIndex * POSITION_COMPONENT_COUNT);
+
+            mPointerCount = mPointerIndex;
         }
     }
 
