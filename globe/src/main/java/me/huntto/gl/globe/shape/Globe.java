@@ -27,9 +27,8 @@ import static android.opengl.GLES20.glUniformMatrix4fv;
 import static android.opengl.GLES20.glUseProgram;
 import static android.opengl.GLES20.glVertexAttribPointer;
 import static android.opengl.Matrix.multiplyMM;
-import static android.opengl.Matrix.rotateM;
 import static android.opengl.Matrix.setIdentityM;
-import static android.opengl.Matrix.translateM;
+import static android.opengl.Matrix.setRotateM;
 
 public class Globe implements Shape {
     private static final int BYTES_PER_FLOAT = 4;
@@ -50,6 +49,7 @@ public class Globe implements Shape {
 
     private final float[] mModelMatrix = new float[16];
     private final float[] mMVPMatrix = new float[16];
+    private final float[] mTemp = new float[32];
 
     private static FloatBuffer sPositionBuffer;
 
@@ -118,7 +118,9 @@ public class Globe implements Shape {
     }
 
     public void rotate(float alpha, float x, float y, float z) {
-        rotateM(mModelMatrix, 0, alpha, x, y, z);
+        setRotateM(mTemp, 0, alpha, x, y, z);
+        multiplyMM(mTemp, 16, mTemp, 0, mModelMatrix, 0);
+        System.arraycopy(mTemp, 16, mModelMatrix, 0, 16);
     }
 
     @Override
