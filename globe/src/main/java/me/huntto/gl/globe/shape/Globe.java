@@ -1,6 +1,7 @@
 package me.huntto.gl.globe.shape;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -118,6 +119,9 @@ public class Globe implements Shape {
     }
 
     public void rotate(float alpha, float x, float y, float z) {
+        if (x == 0 && y == 0 && z == 0) {
+            return;
+        }
         setRotateM(mTemp, 0, alpha, x, y, z);
         multiplyMM(mTemp, 16, mTemp, 0, mModelMatrix, 0);
         System.arraycopy(mTemp, 16, mModelMatrix, 0, 16);
