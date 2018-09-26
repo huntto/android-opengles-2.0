@@ -1,4 +1,4 @@
-package me.huntto.gl.texturecube.shape;
+package me.huntto.gl.texturedcube.shape;
 
 import android.content.Context;
 
@@ -9,7 +9,7 @@ import java.nio.FloatBuffer;
 import me.huntto.gl.common.util.ShaderHelper;
 import me.huntto.gl.common.util.TextResourceReader;
 import me.huntto.gl.common.util.TextureHelper;
-import me.huntto.gl.texturecube.R;
+import me.huntto.gl.texturedcube.R;
 
 import static android.opengl.GLES20.GL_FLOAT;
 import static android.opengl.GLES20.GL_TEXTURE0;
@@ -29,7 +29,7 @@ import static android.opengl.GLES20.glVertexAttribPointer;
 import static android.opengl.Matrix.multiplyMM;
 import static android.opengl.Matrix.setIdentityM;
 
-public class TextureCube implements Shape {
+public class TexturedCube implements Shape {
     private static final int BYTES_PER_FLOAT = 4;
     private static final int POSITION_COMPONENT_COUNT = 3;
     private static final int COORDINATES_COMPONENT_COUNT = 2;
@@ -132,7 +132,7 @@ public class TextureCube implements Shape {
         sTextureId = TextureHelper.loadTexture(context, R.drawable.lena);
     }
 
-    public TextureCube() {
+    public TexturedCube() {
         setIdentityM(mModelMatrix, 0);
     }
 

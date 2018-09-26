@@ -1,4 +1,4 @@
-package me.huntto.gl.texturecube;
+package me.huntto.gl.texturedcube;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

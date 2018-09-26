@@ -1,4 +1,4 @@
-package me.huntto.gl.texturecube;
+package me.huntto.gl.texturedcube;
 
 import android.opengl.GLSurfaceView;
 
@@ -8,7 +8,7 @@ import java.util.List;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import me.huntto.gl.texturecube.shape.Shape;
+import me.huntto.gl.texturedcube.shape.Shape;
 
 import static android.opengl.GLES20.GL_BACK;
 import static android.opengl.GLES20.GL_BLEND;
@@ -17,7 +17,6 @@ import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
 import static android.opengl.GLES20.GL_CULL_FACE;
 import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
 import static android.opengl.GLES20.GL_DEPTH_TEST;
-import static android.opengl.GLES20.GL_FRONT;
 import static android.opengl.GLES20.glClear;
 import static android.opengl.GLES20.glClearColor;
 import static android.opengl.GLES20.glCullFace;

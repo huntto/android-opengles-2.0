@@ -1,10 +1,10 @@
-package me.huntto.gl.texturecube;
+package me.huntto.gl.texturedcube;
 
 import android.opengl.GLSurfaceView;
 import android.support.annotation.NonNull;
 
 import me.huntto.gl.common.BaseActivity;
-import me.huntto.gl.texturecube.shape.TextureCube;
+import me.huntto.gl.texturedcube.shape.TexturedCube;
 
 public class MainActivity extends BaseActivity {
 
@@ -14,11 +14,11 @@ public class MainActivity extends BaseActivity {
         ShapeRenderer shapeRenderer = new ShapeRenderer(new ShapeRenderer.InitGLCallback() {
             @Override
             public void onInitGL() {
-                TextureCube.init(MainActivity.this);
+                TexturedCube.init(MainActivity.this);
             }
         });
 
-        shapeRenderer.addShape(new TextureCube());
+        shapeRenderer.addShape(new TexturedCube());
         return shapeRenderer;
     }
 }
