@@ -9,15 +9,21 @@ import java.nio.FloatBuffer;
 
 import me.huntto.gl.common.util.ShaderHelper;
 import me.huntto.gl.common.util.TextResourceReader;
+import me.huntto.gl.common.util.TextureHelper;
 import me.huntto.gl.particles.R;
 
 import static android.opengl.GLES20.GL_FLOAT;
 import static android.opengl.GLES20.GL_POINTS;
+import static android.opengl.GLES20.GL_TEXTURE0;
+import static android.opengl.GLES20.GL_TEXTURE_2D;
+import static android.opengl.GLES20.glActiveTexture;
+import static android.opengl.GLES20.glBindTexture;
 import static android.opengl.GLES20.glDrawArrays;
 import static android.opengl.GLES20.glEnableVertexAttribArray;
 import static android.opengl.GLES20.glGetAttribLocation;
 import static android.opengl.GLES20.glGetUniformLocation;
 import static android.opengl.GLES20.glUniform1f;
+import static android.opengl.GLES20.glUniform1i;
 import static android.opengl.GLES20.glUniformMatrix4fv;
 import static android.opengl.GLES20.glUseProgram;
 import static android.opengl.GLES20.glVertexAttribPointer;
@@ -46,6 +52,7 @@ public class ParticleSystem implements Shape {
     private static final String A_PARTICLE_START_TIME = "aParticleStartTime";
     private static final String U_MATRIX = "uMatrix";
     private static final String U_TIME = "uTime";
+    private static final String U_TEXTURE_UNIT = "uTextureUnit";
 
     private static int aPositionLocation;
     private static int aColorLocation;
@@ -53,7 +60,9 @@ public class ParticleSystem implements Shape {
     private static int aParticleStartTimeLocation;
     private static int uMatrixLocation;
     private static int uTimeLocation;
+    private static int uTextureUnitLocation;
 
+    private static int sTextureId;
 
     private final float[] mModelMatrix = new float[16];
     private final float[] mMatrix = new float[16];
@@ -82,9 +91,11 @@ public class ParticleSystem implements Shape {
         aParticleStartTimeLocation = glGetAttribLocation(sProgram, A_PARTICLE_START_TIME);
         uMatrixLocation = glGetUniformLocation(sProgram, U_MATRIX);
         uTimeLocation = glGetUniformLocation(sProgram, U_TIME);
+        uTextureUnitLocation = glGetUniformLocation(sProgram, U_TEXTURE_UNIT);
 
 
         sGlobeStartTime = System.currentTimeMillis();
+        sTextureId = TextureHelper.loadTexture(context, R.drawable.particle_texture);
     }
 
     public ParticleSystem(int maxParticleCount) {
@@ -108,6 +119,10 @@ public class ParticleSystem implements Shape {
         glUniformMatrix4fv(uMatrixLocation, 1, false, mMatrix, 0);
 
         glUniform1f(uTimeLocation, (System.currentTimeMillis() - sGlobeStartTime) / 1000.0f);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, sTextureId);
+        glUniform1i(uTextureUnitLocation, 0);
 
         synchronized (PARTICLES_SYNC) {
             int dataOffset = 0;

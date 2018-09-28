@@ -14,5 +14,5 @@ void main() {
     vElapsedTime = uTime - aParticleStartTime;
     vec3 currentPosition = aPosition + (aDirectionVector * vElapsedTime * vElapsedTime);
     gl_Position = uMatrix * vec4(currentPosition, 1.0);
-    gl_PointSize = 10.0f;
+    gl_PointSize = 20.0f;
 }
