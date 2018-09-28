@@ -1,1 +1,1 @@
-include ':triangle', ':common', ':texture', ':cube', ':texturedcube', ':touchpointer', ':sphere', ':globe', ':multitexturedcube'
+include ':triangle', ':common', ':texture', ':cube', ':texturedcube', ':touchpointer', ':sphere', ':globe', ':multitexturedcube', ':particles'
