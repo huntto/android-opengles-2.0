@@ -26,3 +26,6 @@
 
 ## Particles
 <img src="https://github.com/huntto/android-opengles-2.0/blob/master/screenshots/particles.gif" width="320" alt="Particles"/>
+
+## Lighting
+<img src="https://github.com/huntto/android-opengles-2.0/blob/master/screenshots/lighting.png" width="320" alt="Lighting"/>
