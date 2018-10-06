@@ -29,3 +29,11 @@
 
 ## Lighting
 <img src="https://github.com/huntto/android-opengles-2.0/blob/master/screenshots/lighting.png" width="320" alt="Lighting"/>
+
+## Skybox
+<img src="https://github.com/huntto/android-opengles-2.0/blob/master/screenshots/skybox.gif" width="320" alt="Skybox"/>
+
+
+## References
+1. [LearnOpenGL](https://learnopengl-cn.github.io/)
+2. [OpenGL ES 2 for Android : A Quick-Start Guide](https://pragprog.com/book/kbogla/opengl-es-2-for-android)
